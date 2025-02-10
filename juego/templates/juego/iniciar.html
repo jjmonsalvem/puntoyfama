@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Punto y Fama</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+    <h2>Punto y Fama</h2>
+    <form id="juego-form">
+        <input type="text" id="numero" name="numero" maxlength="4" required>
+        <button type="submit">Intentar</button>
+    </form>
+    <p id="resultado"></p>
+    <h3>Historial:</h3>
+    <ul id="historial">
+        {% for intento in historial %}
+            <li>{{ intento.numero }} → {{ intento.puntos }} Puntos, {{ intento.famas }} Famas</li>
+        {% endfor %}
+    </ul>
+
+    <script>
+        $("#juego-form").on("submit", function(event) {
+            event.preventDefault();
+            let numero = $("#numero").val();
+
+            $.post("", {numero: numero, csrfmiddlewaretoken: "{{ csrf_token }}"}, function(response) {
+                $("#resultado").text(response.mensaje);
+                $("#historial").empty().append("<h3>Historial:</h3>");
+                response.historial.forEach(function(i) {
+                    $("#historial").append(`<li>${i.numero} → ${i.puntos} Puntos, ${i.famas} Famas</li>`);
+                });
+            });
+        });
+    </script>
+</body>
+</html>
